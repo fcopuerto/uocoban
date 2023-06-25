@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.security.KeyStore;
 import java.util.*;
 
 /**
@@ -192,6 +193,7 @@ public class Level {
      * @throws LevelException When {@code width} is less than {@code MIN_WIDTH}.
      */
     private void setWidth(int width) throws LevelException {
+        this.width = width;
         //TODO
     }
 
@@ -212,6 +214,7 @@ public class Level {
      */
     private void setHeight(int height) throws LevelException {
         //TODO
+        this.height = height;
     }
 
     /**
@@ -231,6 +234,7 @@ public class Level {
      */
     private void setRemainingMovements(int remainingMovements) throws LevelException {
         //TODO
+        this.remainingMovements = remainingMovements;
     }
 
     /**
@@ -239,6 +243,7 @@ public class Level {
      */
     public void decRemainingMovements() {
         //TODO
+        remainingMovements--;
     }
 
     /**
@@ -326,6 +331,20 @@ public class Level {
      */
     public boolean hasWon() {
         //TODO
+        //Checks if the level was finished. This happens when all the objects from type Destination have a valid Box.
+        boolean emptyFound = false;
+        for (MapItem  item : getMapItemList())
+        {
+            if (item instanceof Destination) {
+                Destination itemDest = (Destination) item;
+                if (itemDest.isEmpty())
+                {
+                    emptyFound = true;
+                    break;
+                }
+            }
+        }
+        return !emptyFound;
     }
 
     /**
@@ -335,6 +354,7 @@ public class Level {
      */
     public boolean isDeadlocked() {
         //TODO
+        return false;
     }
 
     /**
@@ -351,6 +371,7 @@ public class Level {
      */
     private boolean isDeadlocked(Box box) {
         //TODO
+        return false;
     }
 
     /**
@@ -361,6 +382,14 @@ public class Level {
      */
     private boolean isPathableOrMovable(int x, int y) {
         //TODO
+        boolean result =  false;
+        MapItem item  = getMapItem(x,y);
+        if (item!=null)
+        {
+            if (item instanceof MovableEntity || item.isPathable())
+                result = true;
+        }
+        return result;
     }
 
 }

@@ -201,6 +201,15 @@ public class Game {
      */
     public boolean nextLevel() throws LevelException {
         //TODO
+        boolean result;
+        if (this.getCurrentLevel() == maxLevels)
+            result = false;
+        else {
+            currentLevel++;
+            loadLevel();
+            result = true;
+        }
+        return result;
     }
 
     /**
@@ -224,6 +233,7 @@ public class Game {
      */
     public boolean isFinished() {
         //TODO
+        return false;
     }
 
     /**
@@ -234,6 +244,7 @@ public class Game {
      */
     public boolean isLevelCompleted() {
         //TODO
+        return false;
     }
 
     /**
@@ -243,6 +254,7 @@ public class Game {
      */
     public boolean isLevelDeadlocked() {
         //TODO
+        return false;
     }
 
     /**
@@ -252,6 +264,7 @@ public class Game {
      */
     public boolean hasLostGame() {
         //TODO
+        return false;
     }
 
     /**
@@ -261,6 +274,7 @@ public class Game {
      */
     public boolean hasLostLevel() {
         //TODO
+        return false;
     }
 
     /**

@@ -1,14 +1,13 @@
 package edu.uoc.uocoban.model.entities;
-
-import com.badlogic.gdx.graphics.g2d.Sprite;
+import edu.uoc.uocoban.model.utils.Position;
 import edu.uoc.uocoban.model.utils.Sprite;
 
-import javax.swing.text.Position;
 
-public class Wall extends MapItem {
+public class Wall extends edu.uoc.uocoban.model.entities.MapItem {
 
-    public Wall(Position position) {
-        super(Sprite.WALL, position);
+    public Wall(Position position)
+    {
+        super(position,Sprite.WALL);
     }
 
     public boolean isPathable() {

@@ -1,17 +1,33 @@
 package edu.uoc.uocoban.model.entities.pathable;
-
-import com.badlogic.gdx.graphics.g2d.Sprite;
+import edu.uoc.uocoban.model.entities.movable.Box;
+import edu.uoc.uocoban.model.utils.Position;
+import edu.uoc.uocoban.model.utils.Sprite;
 import edu.uoc.uocoban.model.entities.MapItem;
 
-import javax.swing.text.Position;
 
-public class Destination extends MapItem {
+public abstract class Destination extends MapItem implements Mutable {
 
-    public Destination(Position position) {
-        super(Sprite., position);
+    private Box box;
+
+    protected Destination(Position position, Sprite sprite) {
+        super(position, sprite);
     }
 
-    public boolean isPathable() {
-        return true;
+    public Box getBox()
+    {
+        return box;
+    }
+
+    public void setBox(Box box)
+    {
+        this.box = box;
+    }
+    public boolean isEmpty()
+    {
+        return box == null;
+    }
+    public boolean isPathable()
+    {
+        return isEmpty();
     }
 }
