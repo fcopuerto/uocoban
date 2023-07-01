@@ -2,9 +2,14 @@ package edu.uoc.uocoban.model;
 
 import edu.uoc.uocoban.model.entities.MapItem;
 import edu.uoc.uocoban.model.entities.MapItemFactory;
+import edu.uoc.uocoban.model.entities.Wall;
 import edu.uoc.uocoban.model.entities.movable.*;
-import edu.uoc.uocoban.model.entities.pathable.*;
+import edu.uoc.uocoban.model.entities.pathable.BigBoxDestination;
+import edu.uoc.uocoban.model.entities.pathable.Destination;
+import edu.uoc.uocoban.model.entities.movable.Box;
+import edu.uoc.uocoban.model.entities.pathable.SmallBoxDestination;
 import edu.uoc.uocoban.model.exceptions.LevelException;
+import edu.uoc.uocoban.model.utils.Direction;
 import edu.uoc.uocoban.model.utils.Position;
 
 import java.io.BufferedReader;
@@ -12,7 +17,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.security.KeyStore;
 import java.util.*;
 
 /**
@@ -123,8 +127,7 @@ public class Level {
                     if (mapItem instanceof Player) {
                         if (this.player == null) {
                             this.player = (Player) mapItem;
-                        }
-                        else
+                        } else
                             throw new LevelException(LevelException.PLAYER_ERROR);
                     } else if (mapItem instanceof Box) {
                         boxList.add((Box) mapItem);
@@ -193,8 +196,11 @@ public class Level {
      * @throws LevelException When {@code width} is less than {@code MIN_WIDTH}.
      */
     private void setWidth(int width) throws LevelException {
+        //DONE
+        if (width < MIN_WIDTH)
+            throw new LevelException(LevelException.SIZE_ERROR);
         this.width = width;
-        //TODO
+
     }
 
     /**
@@ -213,7 +219,9 @@ public class Level {
      * @throws LevelException When {@code height} is less than {@code MIN_HEIGHT}.
      */
     private void setHeight(int height) throws LevelException {
-        //TODO
+        //DONE
+        if (height < MIN_HEIGHT)
+            throw new LevelException(LevelException.SIZE_ERROR);
         this.height = height;
     }
 
@@ -233,7 +241,9 @@ public class Level {
      * @throws LevelException When {@code remainingMovements} is less or equal than 0.
      */
     private void setRemainingMovements(int remainingMovements) throws LevelException {
-        //TODO
+        //DONE
+        if (remainingMovements <= 0)
+            throw new LevelException(LevelException.MAX_MOVEMENTS_ERROR);
         this.remainingMovements = remainingMovements;
     }
 
@@ -242,8 +252,9 @@ public class Level {
      * 0, this method does nothing.
      */
     public void decRemainingMovements() {
-        //TODO
-        remainingMovements--;
+        //DONE
+        if (getRemainingMovements() > 0)
+            remainingMovements--;
     }
 
     /**
@@ -330,15 +341,13 @@ public class Level {
      * @return {@code true} if none items of type {@link Destination} are empty. Otherwise, {@code false}.
      */
     public boolean hasWon() {
-        //TODO
+        //DONE
         //Checks if the level was finished. This happens when all the objects from type Destination have a valid Box.
         boolean emptyFound = false;
-        for (MapItem  item : getMapItemList())
-        {
+        for (MapItem item : getMapItemList()) {
             if (item instanceof Destination) {
                 Destination itemDest = (Destination) item;
-                if (itemDest.isEmpty())
-                {
+                if (itemDest.isEmpty()) {
                     emptyFound = true;
                     break;
                 }
@@ -353,8 +362,64 @@ public class Level {
      * @return {@code true} if the level is deadlocked. Otherwise, {@code false}.
      */
     public boolean isDeadlocked() {
-        //TODO
-        return false;
+        //DONE
+        List<Box> boxList = getBoxList();
+        boolean result = false;
+        result = boxList.stream().filter(box -> box.isDelivered() == false && (((box instanceof BigBox || box instanceof SmallBox)) && ((box instanceof MovableEntity))))
+                .anyMatch(box -> isDeadlocked(box));
+        return result;
+    }
+    /**
+     * Checks if a specific box is deadLocked having into account it's neighboring boxes.
+     *
+     * @return {@code true} if this box is deadlocked. Otherwise, {@code false}.
+     */
+    private boolean checkBoxInDirection(MapItem item, Direction dirfrom, Direction dirto, ArrayList<MapItem> boxExclusionList) {
+        boolean locked = false;
+
+        switch (dirfrom.name() + "_" + dirto.name()) {
+            case "LEFT_RIGHT": {
+                MapItem itemLeft = getMapItem(item.getPosition().getX() - 1, item.getPosition().getY());
+                MapItem itemRight = getMapItem(item.getPosition().getX() + 1, item.getPosition().getY());
+                if (boxExclusionList.contains(itemLeft)) {
+                    itemLeft = new Wall(itemLeft.getPosition());
+                }
+                if (boxExclusionList.contains(itemRight)) {
+                    itemRight = new Wall(itemRight.getPosition());
+                }
+                if (itemLeft instanceof Wall || itemRight instanceof Wall) {
+                    locked = true;
+                } else if ((itemLeft instanceof Box || itemRight instanceof Box) && (!((itemLeft instanceof Destination && ((Destination) itemLeft).isEmpty() == false) || (itemRight instanceof Destination && ((Destination) itemRight).isEmpty() == false)))) {
+                    boxExclusionList.add(itemLeft);
+                    boxExclusionList.add(itemRight);
+                    boolean lockedDup = (checkBoxInDirection(itemLeft, Direction.LEFT, Direction.RIGHT, boxExclusionList) && checkBoxInDirection(itemLeft, Direction.UP, Direction.DOWN, boxExclusionList));
+                    boolean lockedDown = (checkBoxInDirection(itemRight, Direction.LEFT, Direction.RIGHT, boxExclusionList) && checkBoxInDirection(itemRight, Direction.UP, Direction.DOWN, boxExclusionList));
+                    locked = (lockedDup && lockedDown);
+                }
+                break;
+            }
+            case "UP_DOWN": {
+                MapItem itemUp = getMapItem(item.getPosition().getX(), item.getPosition().getY() - 1);
+                MapItem itemDown = getMapItem(item.getPosition().getX(), item.getPosition().getY() + 1);
+                if (boxExclusionList.contains(itemUp)) {
+                    itemUp = new Wall(itemUp.getPosition());
+                }
+                if (boxExclusionList.contains(itemDown)) {
+                    itemDown = new Wall(itemDown.getPosition());
+                }
+                if (itemUp instanceof Wall || itemDown instanceof Wall) {
+                    locked = true;
+                } else if ((itemUp instanceof Box || itemDown instanceof Box) && (!((itemUp instanceof Destination && ((Destination) itemUp).isEmpty() == false) || (itemDown instanceof Destination && ((Destination) itemDown).isEmpty() == false)))) {
+                    boxExclusionList.add(itemUp);
+                    boxExclusionList.add(itemDown);
+                    boolean lockedDup = (checkBoxInDirection(itemUp, Direction.LEFT, Direction.RIGHT, boxExclusionList) && checkBoxInDirection(itemUp, Direction.UP, Direction.DOWN, boxExclusionList));
+                    boolean lockedDown = (checkBoxInDirection(itemDown, Direction.LEFT, Direction.RIGHT, boxExclusionList) && checkBoxInDirection(itemDown, Direction.UP, Direction.DOWN, boxExclusionList));
+                    locked = (lockedDup && lockedDown);
+                }
+            }
+            break;
+        }
+        return locked;
     }
 
     /**
@@ -370,22 +435,33 @@ public class Level {
      * @return {@code true} if deadlock condition for {@code box} is achieved; {@code false} otherwise.
      */
     private boolean isDeadlocked(Box box) {
-        //TODO
-        return false;
+        //DONE
+        boolean result = false;
+        int lock = 0;
+        boolean leftRightLocked = false;
+        boolean upDownLocked = false;
+
+        leftRightLocked = checkBoxInDirection(box, Direction.LEFT, Direction.RIGHT, new ArrayList());
+        upDownLocked = checkBoxInDirection(box, Direction.UP, Direction.DOWN, new ArrayList());
+
+
+        if (leftRightLocked && upDownLocked)
+            result = true;
+        return result;
     }
 
     /**
      * Checks whether the map item in a given position represented by {@code x} and {@code y} is pathable or movable.
+     *
      * @param x The {@code x} coordinate of the given position
      * @param y The {@code y} coordinate of the given position
      * @return {@code true} if the map item for the given position is pathable or movable; otherwise, {@code false}
      */
     private boolean isPathableOrMovable(int x, int y) {
-        //TODO
-        boolean result =  false;
-        MapItem item  = getMapItem(x,y);
-        if (item!=null)
-        {
+        //DONE
+        boolean result = false;
+        MapItem item = getMapItem(x, y);
+        if (item != null) {
             if (item instanceof MovableEntity || item.isPathable())
                 result = true;
         }

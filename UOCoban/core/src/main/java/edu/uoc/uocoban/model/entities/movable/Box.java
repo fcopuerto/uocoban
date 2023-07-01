@@ -3,6 +3,7 @@ package edu.uoc.uocoban.model.entities.movable;
 import edu.uoc.uocoban.model.entities.MapItem;
 import edu.uoc.uocoban.model.entities.pathable.BigBoxDestination;
 import edu.uoc.uocoban.model.entities.pathable.Destination;
+import edu.uoc.uocoban.model.entities.pathable.Path;
 import edu.uoc.uocoban.model.entities.pathable.SmallBoxDestination;
 import edu.uoc.uocoban.model.utils.Direction;
 import edu.uoc.uocoban.model.utils.Position;
@@ -42,18 +43,20 @@ public abstract class Box extends MovableEntity {
         MapItem item = getLevel().getMapItem(pos);
         if (item != null) {
             //Check If a box is moving to a Path map item, then (1) the Path is removed from the level map; and (2) the position of the Box is updated.
-            if (item.isPathable()) {
+            if (item instanceof Path) {
                 getLevel().removeMapItem(item);
                 result = true;
-            } else {
+            }
+            else
+            {
                 //A box can only move to a Path or a Destination of the same type that the box (i.e., a BigBox cannot move to a SmallBoxDestination; a SmallBox cannot move to a BigBoxDestination)
-                if ((this instanceof SmallBox) & (item instanceof BigBoxDestination)) {
-                    result = false;
-                }
-                else if ((this instanceof BigBox) & (item instanceof SmallBoxDestination)) {
-                    result = false;
-                }else {
+                if ((this instanceof SmallBox) & (item instanceof SmallBoxDestination)) {
                     result = true;
+                }
+                else if ((this instanceof BigBox) & (item instanceof BigBoxDestination)) {
+                    result = true;
+                }else {
+                    result = false;
                 }
                 // Check  A box cannot move to a Destination map item that is already occupied by another box.
                 if (result && (item instanceof Destination)) {
@@ -63,7 +66,9 @@ public abstract class Box extends MovableEntity {
                 if (result && (item instanceof Destination)) {
                     if (((Destination) item).isEmpty()) {
                         this.setDelivered(true);
-                        getLevel().removeMapItem(item);
+                        ((Destination) item).mutate();
+                        ((Destination) item).setBox(this);
+                        getLevel().removeMapItem(this);
                         result = true;
                     }
                 }

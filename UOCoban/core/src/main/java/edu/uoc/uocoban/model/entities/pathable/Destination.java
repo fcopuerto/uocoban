@@ -1,5 +1,6 @@
 package edu.uoc.uocoban.model.entities.pathable;
 import edu.uoc.uocoban.model.entities.movable.Box;
+import edu.uoc.uocoban.model.entities.pathable.Mutable;
 import edu.uoc.uocoban.model.utils.Position;
 import edu.uoc.uocoban.model.utils.Sprite;
 import edu.uoc.uocoban.model.entities.MapItem;

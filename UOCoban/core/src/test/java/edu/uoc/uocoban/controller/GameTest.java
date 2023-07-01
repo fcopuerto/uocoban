@@ -1,21 +1,11 @@
 package edu.uoc.uocoban.controller;
 
-import edu.uoc.uocoban.model.Level;
-import edu.uoc.uocoban.model.entities.MapItem;
-import edu.uoc.uocoban.model.entities.movable.Box;
-import edu.uoc.uocoban.model.entities.movable.Player;
 import edu.uoc.uocoban.model.exceptions.LevelException;
 import edu.uoc.uocoban.model.utils.Direction;
-import edu.uoc.uocoban.model.utils.Position;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.lang.reflect.Modifier;
-import java.util.Arrays;
-import java.util.Iterator;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -128,7 +118,7 @@ public class GameTest {
             game.movePlayer(Direction.DOWN);
             game.movePlayer(Direction.DOWN);
             assertTrue(game.isLevelCompleted());
-            
+
         } catch (LevelException e) {
             e.printStackTrace();
             fail("There was some error with testIsLevelCompleted");

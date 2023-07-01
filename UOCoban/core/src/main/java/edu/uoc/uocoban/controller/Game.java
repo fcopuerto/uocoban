@@ -2,7 +2,9 @@ package edu.uoc.uocoban.controller;
 
 import edu.uoc.uocoban.model.Level;
 import edu.uoc.uocoban.model.entities.MapItem;
+import edu.uoc.uocoban.model.entities.movable.Box;
 import edu.uoc.uocoban.model.entities.movable.Player;
+import edu.uoc.uocoban.model.entities.pathable.Destination;
 import edu.uoc.uocoban.model.exceptions.LevelException;
 import edu.uoc.uocoban.model.utils.Direction;
 
@@ -82,7 +84,6 @@ public class Game {
             try {
                 path = getClass().getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
             } catch (URISyntaxException e) {
-                System.out.println("ERROR: Game Constructor");
                 e.printStackTrace();
                 System.exit(-1);
             }
@@ -168,7 +169,9 @@ public class Game {
      * If {@code lives} is 0, then this method does nothing.
      */
     public void decLives() {
-        //TODO
+        //DONE
+        if (lives>0)
+            lives--;
     }
 
     /**
@@ -200,11 +203,13 @@ public class Game {
      * @throws LevelException When there is a level exception/problem loading the new level.
      */
     public boolean nextLevel() throws LevelException {
-        //TODO
+        //DONE
         boolean result;
         if (this.getCurrentLevel() == maxLevels)
             result = false;
         else {
+            if (getCurrentLevel()>0)
+                setScore(getScore()+getRemainingMovements());
             currentLevel++;
             loadLevel();
             result = true;
@@ -232,19 +237,19 @@ public class Game {
      * @return {@code true} if there are no more levels and therefore the game is finished. Otherwise, {@code false}.
      */
     public boolean isFinished() {
-        //TODO
-        return false;
+
+        return (getCurrentLevel()==maxLevels);
     }
 
     /**
-     * Checks if the current level is completed, i.e. all objects from type {@link edu.uoc.uocoban.model.entities.pathable.Destination}
-     * have a valid {@link edu.uoc.uocoban.model.entities.movable.Box}.
+     * Checks if the current level is completed, i.e. all objects from type {@link Destination}
+     * have a valid {@link Box}.
      *
      * @return {@code true} if this level is completed, otherwise {@code false}.
      */
     public boolean isLevelCompleted() {
-        //TODO
-        return false;
+        //DONE
+        return level.hasWon();
     }
 
     /**
@@ -253,8 +258,11 @@ public class Game {
      * @return {@code true} if this level is deadlocked, otherwise {@code false}.
      */
     public boolean isLevelDeadlocked() {
-        //TODO
-        return false;
+        //DONE
+        boolean result = false;
+        if (level!=null)
+            result = level.isDeadlocked();
+        return result;
     }
 
     /**
@@ -263,8 +271,8 @@ public class Game {
      * @return {@code true} if this the player has lost, otherwise {@code false}.
      */
     public boolean hasLostGame() {
-        //TODO
-        return false;
+        //DONE
+        return getLives()==0 && (!(level.hasWon()));
     }
 
     /**
@@ -273,8 +281,9 @@ public class Game {
      * has not been won; otherwise, {@code false}.
      */
     public boolean hasLostLevel() {
-        //TODO
-        return false;
+        //DONE
+        //true if the number of remaining movements is 0 and the current level has not been won; otherwise, false.
+        return getRemainingMovements()==0 && !(level.hasWon());
     }
 
     /**
@@ -318,8 +327,9 @@ public class Game {
      */
     public void movePlayer(Direction direction) {
         boolean moved = getPlayer().move(direction);
-        if (moved)
+        if (moved) {
             level.decRemainingMovements();
+        }
     }
 
 }

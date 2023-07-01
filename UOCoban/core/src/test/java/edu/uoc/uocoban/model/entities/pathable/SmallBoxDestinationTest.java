@@ -1,8 +1,6 @@
 package edu.uoc.uocoban.model.entities.pathable;
 
 import edu.uoc.uocoban.model.Level;
-import edu.uoc.uocoban.model.entities.movable.BigBox;
-import edu.uoc.uocoban.model.entities.movable.Box;
 import edu.uoc.uocoban.model.entities.movable.SmallBox;
 import edu.uoc.uocoban.model.exceptions.LevelException;
 import edu.uoc.uocoban.model.utils.Position;
@@ -123,5 +121,5 @@ public class SmallBoxDestinationTest {
             e.printStackTrace();
         }
     }
-    
+
 }

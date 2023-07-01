@@ -58,6 +58,19 @@ public class LevelTest {
     }
 
     @Test
+    @Tag("deadlock")
+    @DisplayName("FPS!! Testing deadlock by boxes2")
+    public void testIsDeadlockedFPS() {
+        try {
+            level = new Level("levels/level1.txt");
+            assertFalse(level.isDeadlocked());
+        } catch (LevelException e) {
+            e.printStackTrace();
+            fail("There was some error in testIsDeadlocked1");
+        }
+    }
+
+    @Test
     @Tag("playLevel")
     public void testDecRemainingMovements() {
         level.decRemainingMovements();
@@ -122,7 +135,7 @@ public class LevelTest {
             assertFalse(level.isDeadlocked());
 
             level.getPlayer().move(Direction.LEFT);
-            assertTrue(level.isDeadlocked());
+                assertTrue(level.isDeadlocked());
 
         } catch (LevelException e) {
             e.printStackTrace();

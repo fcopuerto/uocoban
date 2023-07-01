@@ -48,7 +48,8 @@ public class WelcomeScreen implements Screen {
             }
             game.batch.draw(UocobanGame.assetManager.get(UocobanGame.logoAsset), 0, 0, UocobanGame.WINDOW_WIDTH, UocobanGame.WINDOW_HEIGHT);
             game.font.draw(game.batch, "Press enter to play!", (int) (UocobanGame.WINDOW_WIDTH * 0.3), UocobanGame.WINDOW_HEIGHT / 4);
-            //TODO
+            //DONE
+            game.font.draw(game.batch, "Francisco Javier Puerto Serrano", (int) (UocobanGame.WINDOW_WIDTH * 0.3), UocobanGame.WINDOW_HEIGHT / 5);
         }
         game.batch.end();
     }

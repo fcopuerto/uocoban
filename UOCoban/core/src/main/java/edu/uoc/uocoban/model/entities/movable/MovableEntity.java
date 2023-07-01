@@ -13,7 +13,6 @@ public abstract class MovableEntity extends MapItem {
     protected MovableEntity(Position position, Sprite sprite, Level level){
         super(position,sprite);
         this.level = level;
-
     }
     public Level getLevel() {
         return level;

@@ -8,7 +8,7 @@ public abstract class MapItem {
     private Position position;
     private Sprite sprite;
 
-    public MapItem(Position position, Sprite sprite)
+    protected MapItem(Position position, Sprite sprite)
     {
         setPosition(position);
         setSprite(sprite);
@@ -26,7 +26,7 @@ public abstract class MapItem {
         return sprite;
     }
 
-    public void setSprite(Sprite sprite) {
+    protected void setSprite(Sprite sprite) {
         this.sprite = sprite;
     }
 

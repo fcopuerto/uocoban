@@ -49,7 +49,11 @@ public class GameScreen implements Screen {
                 Color c = game.batch.getColor();
 
                 game.font.draw(game.batch, "Level " + gameController.getCurrentLevel(), 25, 160);
-                //TODO
+                //DONE
+                game.font.draw(game.batch, "Movements " + gameController.getRemainingMovements(), 25, 130);
+                game.font.draw(game.batch, "Lives " + gameController.getLives(), 25, 100);
+                game.font.draw(game.batch, "Score " + gameController.getScore(), 25, 70);
+
 
                 while (itr.hasNext()) {
                     MapItem item = itr.next();
